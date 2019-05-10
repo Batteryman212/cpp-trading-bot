@@ -3,8 +3,9 @@ Websocket Handler
 Handles info data over websocket connection, including:
  - Private order data
  - Public market data
-*Does not handle actual order execution, only information sharing.
+*Does not handle actual order execution (as this is done with REST API), only information sharing.
 '''
+
 """
 To-Dos
 - Review current code
