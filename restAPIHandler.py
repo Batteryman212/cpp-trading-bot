@@ -6,10 +6,14 @@ is done with websocket API), only order execution.
 '''
 
 """
-To-Dos
-- Edit code to add buying
-- Edit code to add selling
+TODO
+- Incorporate API documentation in comments
+- Test on sandbox exchange
+- Time execution duration in Python (migrate to C++ for speed)
+- Add Notifications
+- Build core AI to connect websocket and REST handlers
 """
+
 
 # Import libraries
 import requests
@@ -19,6 +23,9 @@ import hmac
 import hashlib
 import datetime, time
 
+base_url = "https://api.sandbox.gemini.com"
+
+# Helper Functions:
 # Create nonce from current timestamp
 def nonce():
     t = datetime.datetime.now()
@@ -33,32 +40,62 @@ def b64_encode(payload):
 def sign_payload(b64_payload, api_secret):
     return hmac.new(api_secret, b64_payload, hashlib.sha384).hexdigest()
 
+# Build request headers
+def create_request_headers(api_key, api_secret, payload):
+    b64_payload = b64_encode(payload)
+    payload_signature = sign_payload(b64_payload, api_secret)
+    request_headers = {
+        'Content-Type': "text/plain",
+        'Content-Length': "0",
+        'X-GEMINI-APIKEY': api_key,
+        'X-GEMINI-PAYLOAD': b64_payload,
+        'X-GEMINI-SIGNATURE': payload_signature,
+        'Cache-Control': "no-cache"
+        }
+    return request_headers
 
-# Get URL and API Public/Private keys
-url = "https://api.gemini.com/v1/mytrades"
-gemini_api_key = "mykey"
-gemini_api_secret = "1234abcd".encode() # UTF-8 default encoding
 
-# Create payload
-payload = {"request": "/v1/mytrades", "nonce": nonce()}
+# API Request Functions:
+# Get past trades
+def api_get_past_trades(api_key, api_secret):
+    endpoint = "/v1/mytrades"
+    url = base_url + endpoint
+    payload = {
+        "request": endpoint, 
+        "nonce": nonce()}
+    request_headers = create_request_headers(api_key, api_secret, payload)
 
-# Properly encode payload and create signature
-b64_payload = b64_encode(payload)
-signature = sign_payload(b64_payload, gemini_api_secret)
+    return requests.post(url, headers=request_headers).json()
 
-# Create request headers
-request_headers = {
-    'Content-Type': "text/plain",
-    'Content-Length': "0",
-    'X-GEMINI-APIKEY': gemini_api_key,
-    'X-GEMINI-PAYLOAD': b64_payload,
-    'X-GEMINI-SIGNATURE': signature,
-    'Cache-Control': "no-cache"
-    }
+# Place new order
+def api_new_order(api_key, api_secret, symbol, amount, price, side, type):
+    endpoint = "/v1/order/new"
+    url = base_url + endpoint
+    payload = {
+        "request": endpoint, 
+        "nonce": nonce(),
+        "symbol": symbol,
+        "amount": str(amount),
+        "price": str(price),
+        "side": side,
+        "type": type
+        }
+    request_headers = create_request_headers(api_key, api_secret, payload)
 
-# Store HTTP POST response
-http_response = requests.post(url, headers=request_headers)
+    return requests.post(url, headers=request_headers).json()
 
-# Convert to .JSON and print
-my_trades = http_response.json()
-print(my_trades)
+
+# Main function body
+if __name__ == "__main__":
+
+    # Get API keys
+    api_key = "mykey"
+    api_secret = "1234abcd".encode() # UTF-8 default encoding
+
+    # New order
+    btc_order = api_new_order(api_key, api_secret, symbol="btcusd", amount=5, price=3633.00, side="buy", type="exchange limit")
+    print(btc_order)
+
+    # Print past trades
+    my_trades = api_get_past_trades(api_key, api_secret)
+    print(my_trades)
