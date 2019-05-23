@@ -41,7 +41,7 @@ def sign_payload(b64_payload, api_secret):
     return hmac.new(api_secret, b64_payload, hashlib.sha384).hexdigest()
 
 # Build request headers
-def create_request_headers(api_key, api_secret, payload):
+def create_request(api_key, api_secret, payload):
     b64_payload = b64_encode(payload)
     payload_signature = sign_payload(b64_payload, api_secret)
     request_headers = {
@@ -56,46 +56,54 @@ def create_request_headers(api_key, api_secret, payload):
 
 
 # API Request Functions:
-# Get past trades
+# Get past trades (migrating to websocket handler)
 def api_get_past_trades(api_key, api_secret):
     endpoint = "/v1/mytrades"
     url = base_url + endpoint
     payload = {
         "request": endpoint, 
         "nonce": nonce()}
-    request_headers = create_request_headers(api_key, api_secret, payload)
+    request_headers = create_request(api_key, api_secret, payload)
 
-    return requests.post(url, headers=request_headers).json()
+    response = requests.post(url, headers=request_headers)
+
+    return response.json()
 
 # Place new order
-def api_new_order(api_key, api_secret, symbol, amount, price, side, type):
+def api_new_order(api_key, api_secret, client_id, symbol, amount, price, side, type):
     endpoint = "/v1/order/new"
     url = base_url + endpoint
     payload = {
         "request": endpoint, 
         "nonce": nonce(),
+        "client_order_id": client_id,
         "symbol": symbol,
         "amount": str(amount),
         "price": str(price),
         "side": side,
         "type": type
         }
-    request_headers = create_request_headers(api_key, api_secret, payload)
+    request_headers = create_request(api_key, api_secret, payload)
 
-    return requests.post(url, headers=request_headers).json()
+    response = requests.post(url, headers=request_headers)
+
+    return response.json()
 
 
 # Main function body
 if __name__ == "__main__":
 
     # Get API keys
-    api_key = "mykey"
-    api_secret = "1234abcd".encode() # UTF-8 default encoding
+    trade_api_key = "mykey"
+    trade_api_secret = "1234abcd".encode() # UTF-8 default encoding
+
+    # Get Client Order ID
+    client_id = "Batteryman212"
 
     # New order
-    btc_order = api_new_order(api_key, api_secret, symbol="btcusd", amount=5, price=3633.00, side="buy", type="exchange limit")
+    btc_order = api_new_order(trade_api_key, trade_api_secret, client_id, symbol="btcusd", amount=5, price=3633.00, side="buy", type="exchange limit")
     print(btc_order)
 
     # Print past trades
-    my_trades = api_get_past_trades(api_key, api_secret)
+    my_trades = api_get_past_trades(trade_api_key, trade_api_secret)
     print(my_trades)
