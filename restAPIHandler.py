@@ -8,10 +8,8 @@ is done with websocket API), only order execution.
 """
 TODO
 - Incorporate API documentation in comments
-- Test on sandbox exchange
 - Time execution duration in Python (migrate to C++ for speed)
 - Add Notifications
-- Build core AI to connect websocket and REST handlers
 """
 
 

@@ -8,9 +8,6 @@ Handles info data over websocket connection, including:
 
 """
 TODO
-- Refactor code to match REST API handler
-- Edit code to include market data
-- Test basic info receipt on sandbox exchange
 - Time execution duration in Python
 - BUild core AI to connect websocket and REST handlers
 - Add notifications
