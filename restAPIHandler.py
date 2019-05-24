@@ -5,14 +5,6 @@ Handles order management and execution.
 is done with websocket API), only order execution.
 '''
 
-"""
-TODO
-- Incorporate API documentation in comments
-- Time execution duration in Python (migrate to C++ for speed)
-- Add Notifications
-"""
-
-
 # Import libraries
 import requests
 import json
@@ -99,7 +91,7 @@ if __name__ == "__main__":
     client_id = "Batteryman212"
 
     # New order
-    btc_order = api_new_order(trade_api_key, trade_api_secret, client_id, symbol="btcusd", amount=5, price=3633.00, side="buy", type="exchange limit")
+    btc_order = api_new_order(trade_api_key, trade_api_secret, client_id, symbol="btcusd", amount=2, price=3633.00, side="buy", type="exchange limit")
     print(btc_order)
 
     # Print past trades

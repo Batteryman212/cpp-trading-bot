@@ -6,13 +6,6 @@ Handles info data over websocket connection, including:
 *Does not handle actual order execution (as this is done with REST API), only information sharing.
 '''
 
-"""
-TODO
-- Time execution duration in Python
-- BUild core AI to connect websocket and REST handlers
-- Add notifications
-"""
-
 # Import libraries
 import ssl
 import websocket
