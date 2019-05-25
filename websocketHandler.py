@@ -14,13 +14,24 @@ import base64
 import hmac
 import hashlib
 import time
+import re
+import dataManager  # Import all names from dataManager
 
 base_url = "wss://api.sandbox.gemini.com"
 
 # Helper Functions:
 # On message, print
 def on_message(ws, message):
-    print(message)
+    # Update current OHLC
+    symbol = re.split('/|\?', ws.url)[5]
+    msg_split = re.split(':|,', message)
+    if symbol not in dataManager.recent_trades:
+        dataManager.recent_trades[symbol] = []
+    time = int(msg_split[5])
+    volume = float(re.split('"', msg_split[18])[1])
+    price = float(re.split('"', msg_split[16])[1])
+    dataManager.recent_trades[symbol].insert(0, [time, volume, price])
+    print(dataManager.recent_trades)
 
 # On error, print
 def on_error(ws, error):
@@ -80,12 +91,14 @@ def api_get_order_events(api_key, api_secret):
     return ws
 
 # Get market data
-def api_get_market_data(symbol):
-    endpoint = "/v1/marketdata/" + symbol
+def api_get_market_data(symbol, heartbeat='false', top_of_book='false', bids='true', offers='true', trades='true', auctions='true'):
+
+    endpoint = "/v1/marketdata/"+symbol+"?heartbeat="+heartbeat+"&top_of_book="+top_of_book+"&bids="+bids+"&offers="+offers+"&trades="+trades+"&auctions="+auctions
     url = base_url + endpoint
 
     ws = websocket.WebSocketApp(url, on_message=on_message, on_error=on_error, on_close=on_close)
     ws.run_forever(sslopt={"cert_reqs": ssl.CERT_NONE})
+    print("Got this far")
 
     return ws
 
@@ -104,7 +117,7 @@ if __name__ == "__main__":
     # ws_events.close()
 
     # Get market data
-    ws_data = api_get_market_data("BTCUSD")
+    ws_data = api_get_market_data("BTCUSD", heartbeat='false', top_of_book='false', bids='false', offers='false', trades='true', auctions='false')
     # data = ws_data.recv()
     # print(data)
     # ws_data.close()

@@ -7,4 +7,5 @@ features from there.
 '''
 
 def coreAI(cur_investments, cur_candle_data):
+    # HODLE
     return cur_investments
