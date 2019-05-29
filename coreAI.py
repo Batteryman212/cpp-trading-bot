@@ -1,5 +1,5 @@
 '''
-Core AI
+Cryptobot - Core AI
 The brains behind the bot. It takes in current OHLC data
 and decides what to do with the current investments
 '''

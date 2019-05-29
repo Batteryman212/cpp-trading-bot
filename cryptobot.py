@@ -23,7 +23,7 @@ from historicalTesting import historical_test
 
 def live_run():
     # Start data management
-    data_mgmt()
+    start_data_mgmt()
     
     # Get Websocket Info
     ws_api_key = "mykey"
@@ -32,10 +32,10 @@ def live_run():
     url = "wss://api.gemini.com"
 
     #Thread run
-    api_get_market_data(ws_symbol, url)
+    market_data_wst = start_market_data_ws(ws_symbol, url)
 
     #Thread run
-    api_get_order_events(ws_api_key, ws_api_secret, url)
+    order_events_wst = start_order_events_ws(ws_api_key, ws_api_secret, url)
 
     # Get AI Info
     ai_api_key = "mykey"
@@ -49,7 +49,7 @@ def live_run():
 
 def sandbox_run():
     # Start data management
-    data_mgmt()
+    start_data_mgmt()
     
     # Get Websocket Info
     ws_api_key = "mykey"
@@ -58,10 +58,10 @@ def sandbox_run():
     url = "wss://api.sandbox.gemini.com"
 
     #Thread run
-    api_get_market_data(ws_symbol, url)
+    market_data_wst = start_market_data_ws(ws_symbol, url)
 
     #Thread run
-    api_get_order_events(ws_api_key, ws_api_secret, url)
+    order_events_wst = start_order_events_ws(ws_api_key, ws_api_secret, url)
 
     # Get AI Info
     ai_api_key = "mykey"
@@ -75,7 +75,7 @@ def sandbox_run():
 
 def hist_run(dates, symbols, start_investments):
     # Start data management
-    # data_mgmt()
+    # start_data_mgmt()
 
     # Run historical testing
     historical_test(dates[0], dates[1], symbols, start_investments)
@@ -99,7 +99,8 @@ if __name__ == "__main__":
     if args.hist:
         symbols = ['BTCUSD', 'ETHUSD']
         start_investments = {"BTC": 1.0, "ETH": 0.5}
-        test_run(args.date, symbols, start_investments) # Start test with dates
+        end_investments = hist_run(args.date, symbols, start_investments) # Start test with dates
+        print(end_investments)
     else:
         
         if args.live:

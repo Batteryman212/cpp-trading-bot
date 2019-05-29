@@ -28,6 +28,9 @@ def run_data(startDate, endDate, symbols, start_investments):
     cur_investments = start_investments # Form: {"SYMBOL": amount}
     startYear = startDate.split(' ')[0].split('-')[0]
 
+    if startDate >= endDate:
+        raise AssertionError('End date is not after start date.')
+
     # For each symbol, open first file
     for symbol in symbols:
         # Append symbol and initial OHLC to candle_ohlc_data
@@ -140,12 +143,12 @@ def net_worth(date, investments):
 
 def historical_test(startDate, endDate, symbols, start_investments):
 
-    print("Start net worth on "+startDate+": "+str(net_worth(startDate, start_investments)))
+    # print("Start net worth on "+startDate+": "+str(net_worth(startDate, start_investments)))
 
     # End investments
     end_investments = run_data(startDate, endDate, symbols, start_investments)
     print("End net worth on "+startDate+": "+str(net_worth(endDate, end_investments)))
 
-    return
+    return end_investments
 
     

@@ -74,7 +74,7 @@ def socket_sequence_verify(socket_sequence, last_num):
 
 # API Request Functions
 # Get order events
-def api_get_order_events(api_key, api_secret, base_url):
+def start_order_events_ws(api_key, api_secret, base_url):
     endpoint = "/v1/order/events"
     url = base_url + endpoint
     payload = {
@@ -84,19 +84,21 @@ def api_get_order_events(api_key, api_secret, base_url):
     request_headers = create_private_request(api_key, api_secret, payload)
 
     ws = websocket.WebSocketApp(url, on_message=on_message, on_error=on_error, on_close=on_close, header=request_headers)
-    ws.run_forever(sslopt={"cert_reqs": ssl.CERT_NONE})
+    wst = threading.Thread(target=ws.run_forever, daemon=True, kwargs={'sslopt': {"cert_reqs": ssl.CERT_NONE}})
+    wst.start()
 
-    return ws
+    return wst
 
 # Get market data
-def api_get_market_data(symbol, base_url, heartbeat='false', top_of_book='false', bids='false', offers='false', trades='true', auctions='false'):
+def start_market_data_ws(symbol, base_url, heartbeat='false', top_of_book='false', bids='false', offers='false', trades='true', auctions='false'):
 
     endpoint = "/v1/marketdata/"+symbol+"?heartbeat="+heartbeat+"&top_of_book="+top_of_book+"&bids="+bids+"&offers="+offers+"&trades="+trades+"&auctions="+auctions
     url = base_url + endpoint
 
     ws = websocket.WebSocketApp(url, on_message=on_message, on_error=on_error, on_close=on_close)
-    ws.run_forever(sslopt={"cert_reqs": ssl.CERT_NONE})
+    wst = threading.Thread(target=ws.run_forever, daemon=True, kwargs={'sslopt': {"cert_reqs": ssl.CERT_NONE}})
+    wst.start()
 
-    return ws
+    return wst
 
 
