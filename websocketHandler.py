@@ -17,8 +17,6 @@ import time
 import re
 import dataManager  # Import all names from dataManager
 
-base_url = "wss://api.sandbox.gemini.com"
-
 # Helper Functions:
 # On message, print
 def on_message(ws, message):
@@ -76,7 +74,7 @@ def socket_sequence_verify(socket_sequence, last_num):
 
 # API Request Functions
 # Get order events
-def api_get_order_events(api_key, api_secret):
+def api_get_order_events(api_key, api_secret, base_url):
     endpoint = "/v1/order/events"
     url = base_url + endpoint
     payload = {
@@ -91,36 +89,14 @@ def api_get_order_events(api_key, api_secret):
     return ws
 
 # Get market data
-def api_get_market_data(symbol, heartbeat='false', top_of_book='false', bids='true', offers='true', trades='true', auctions='true'):
+def api_get_market_data(symbol, base_url, heartbeat='false', top_of_book='false', bids='false', offers='false', trades='true', auctions='false'):
 
     endpoint = "/v1/marketdata/"+symbol+"?heartbeat="+heartbeat+"&top_of_book="+top_of_book+"&bids="+bids+"&offers="+offers+"&trades="+trades+"&auctions="+auctions
     url = base_url + endpoint
 
     ws = websocket.WebSocketApp(url, on_message=on_message, on_error=on_error, on_close=on_close)
     ws.run_forever(sslopt={"cert_reqs": ssl.CERT_NONE})
-    print("Got this far")
 
     return ws
-
-
-# Main function body
-if __name__ == "__main__":
-
-    # Get API Keys
-    read_api_key = "mykey"
-    read_api_secret = "1234abcd".encode()
-
-    # # Get order events
-    # ws_events = api_get_order_events(read_api_key, read_api_secret)
-    # events = ws_events.recv()
-    # print(events)
-    # ws_events.close()
-
-    # Get market data
-    ws_data = api_get_market_data("BTCUSD", heartbeat='false', top_of_book='false', bids='false', offers='false', trades='true', auctions='false')
-    # data = ws_data.recv()
-    # print(data)
-    # ws_data.close()
-
 
 

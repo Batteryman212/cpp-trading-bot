@@ -138,21 +138,14 @@ def net_worth(date, investments):
     return net_worth
 
 
-if __name__ == "__main__":
+def historical_test(startDate, endDate, symbols, start_investments):
 
-    # Start and end times
-    startDate = "2018-12-07 21:21:00"
-    endDate = "2018-12-08 21:23:00"
-
-    # Symbols in workspace
-    symbols = ['BTCUSD', 'ETHUSD']
-
-    # Current investments
-    start_investments = {"BTC": 1.0, "ETH": 0.5}
     print("Start net worth on "+startDate+": "+str(net_worth(startDate, start_investments)))
 
     # End investments
     end_investments = run_data(startDate, endDate, symbols, start_investments)
     print("End net worth on "+startDate+": "+str(net_worth(endDate, end_investments)))
+
+    return
 
     

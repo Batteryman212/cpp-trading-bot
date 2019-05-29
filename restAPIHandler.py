@@ -13,7 +13,6 @@ import hmac
 import hashlib
 import datetime, time
 
-base_url = "https://api.sandbox.gemini.com"
 
 # Helper Functions:
 # Create nonce from current timestamp
@@ -47,7 +46,7 @@ def create_request(api_key, api_secret, payload):
 
 # API Request Functions:
 # Get past trades (migrating to websocket handler)
-def api_get_past_trades(api_key, api_secret):
+def api_get_past_trades(api_key, api_secret, base_url):
     endpoint = "/v1/mytrades"
     url = base_url + endpoint
     payload = {
@@ -60,7 +59,8 @@ def api_get_past_trades(api_key, api_secret):
     return response.json()
 
 # Place new order
-def api_new_order(api_key, api_secret, client_id, symbol, amount, price, side, type):
+def api_new_order(api_key, api_secret, client_id, symbol, amount, price, side, type="exchange limit"):
+    # Example: api_new_order(trade_api_key, trade_api_secret, client_id, base_url, symbol="btcusd", amount=2, price=3633.00, side="buy", type="exchange limit")
     endpoint = "/v1/order/new"
     url = base_url + endpoint
     payload = {
@@ -79,21 +79,3 @@ def api_new_order(api_key, api_secret, client_id, symbol, amount, price, side, t
 
     return response.json()
 
-
-# Main function body
-if __name__ == "__main__":
-
-    # Get API keys
-    trade_api_key = "mykey"
-    trade_api_secret = "1234abcd".encode() # UTF-8 default encoding
-
-    # Get Client Order ID
-    client_id = "Batteryman212"
-
-    # New order
-    btc_order = api_new_order(trade_api_key, trade_api_secret, client_id, symbol="btcusd", amount=2, price=3633.00, side="buy", type="exchange limit")
-    print(btc_order)
-
-    # Print past trades
-    my_trades = api_get_past_trades(trade_api_key, trade_api_secret)
-    print(my_trades)
