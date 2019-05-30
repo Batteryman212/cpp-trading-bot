@@ -16,6 +16,12 @@ time_space = 60 # seconds for relevancy
 def coin_value(trade):
     return trade[2] / trade[1]
 
+def data_daemon():
+    
+
+
+    
+
 def current_OHLC_daemon():
     while True:
         # Calculate OHLC
