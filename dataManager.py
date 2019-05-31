@@ -10,6 +10,7 @@ Handles data storage and upkeep:
 current_OHLC = {} # Form: {"SYMBOL": [open, high, low, close]}
 recent_trades = {} # Form: {"SYMBOL": [[timestamp, volume, price]]}, newer trades in front
 current_orders = {} # Form: {"SYMBOL": ...}
+# VWAP = Cum(V*(H+L+C)/3) / Cum(V)
 
 time_space = 60 # seconds for relevancy
 
@@ -20,7 +21,7 @@ def data_daemon():
     
 
 
-    
+
 
 def current_OHLC_daemon():
     while True:

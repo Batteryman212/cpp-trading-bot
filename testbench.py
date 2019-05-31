@@ -81,7 +81,14 @@ class TestFunctionMethods(unittest.TestCase):
     '''
 
     '''
-    6. Test cryptobot.py
+    6. Test indicators.py
+        a. SMA_Indicator.update_diff
+        b. EMA_Indicator.update_diff
+        c. MACD_Indicator.update_diff
+    '''
+
+    '''
+    7. Test cryptobot.py
         a. live_run
         b. sandbox_run
         c. hist_run

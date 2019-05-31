@@ -81,7 +81,7 @@ def update_indicators(price_array):
 
     sma_ind.update_diff(price_array)
     ema_ind.update_diff(price_array)
-    macd_ind.update)diff(price_array)
+    macd_ind.update_diff(price_array)
 
 def rsi():
     return
