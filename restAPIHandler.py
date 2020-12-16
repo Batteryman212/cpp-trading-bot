@@ -13,6 +13,8 @@ import hmac
 import hashlib
 import datetime, time
 
+# Consts
+base_url = 'https://api.gemini.com'
 
 # Helper Functions:
 # Create nonce from current timestamp
@@ -46,7 +48,7 @@ def create_request(api_key, api_secret, payload):
 
 # API Request Functions:
 # Get past trades (migrating to websocket handler)
-def api_get_past_trades(api_key, api_secret, base_url):
+def api_get_past_trades(api_key, api_secret):
     endpoint = "/v1/mytrades"
     url = base_url + endpoint
     payload = {
@@ -58,8 +60,21 @@ def api_get_past_trades(api_key, api_secret, base_url):
 
     return response.json()
 
+# Get active orders
+def api_active_orders(api_key, api_secret):
+    endpoint = "/v1/orders"
+    url = base_url + endpoint
+    payload = {
+        "request": endpoint,
+        "nonce": nonce()
+    }
+    request_headers = create_request(api_key, api_secret, payload)
+    response = requests.post(url, headers=request_headers)
+    print("Active orders: ", response.json())
+    return response.json()
+
 # Place new order
-def api_new_order(api_key, api_secret, client_id, symbol, amount, price, side, type="exchange limit"):
+def api_new_order(api_key, api_secret, client_id, symbol, amount, price, side, order_type="exchange limit", options=['immediate-or-cancel']):
     # Example: api_new_order(trade_api_key, trade_api_secret, client_id, base_url, symbol="btcusd", amount=2, price=3633.00, side="buy", type="exchange limit")
     endpoint = "/v1/order/new"
     url = base_url + endpoint
@@ -71,11 +86,44 @@ def api_new_order(api_key, api_secret, client_id, symbol, amount, price, side, t
         "amount": str(amount),
         "price": str(price),
         "side": side,
-        "type": type
+        "type": order_type
         }
     request_headers = create_request(api_key, api_secret, payload)
-
     response = requests.post(url, headers=request_headers)
-
+    print("New order: ", response.json())
     return response.json()
 
+# Cancel active order
+def api_cancel_order(api_key, api_secret, order_id):
+    endpoint = "/v1/order/cancel"
+    url = base_url + endpoint
+    payload = {
+        "request": endpoint,
+        "nonce": nonce(),
+        "order_id": order_id
+    }
+    request_headers = create_request(api_key, api_secret, payload)
+    response = requests.post(url, headers=request_headers)
+    print("Cancel order: ", response.json())
+    return response.json()
+
+def main():
+    api_key='you wish'
+    api_secret='LOL'.encode()
+
+    # new_order = api_new_order(api_key,api_secret,
+    #     client_id=nonce(),
+    #     symbol='ethusd',
+    #     amount='1',
+    #     price='300',
+    #     side='buy',
+    # )
+
+    active_orders = api_active_orders(api_key,api_secret)
+
+    # cancel_order = api_cancel_order(api_key, api_secret,
+    #     order_id = '12345'
+    # )
+
+if __name__ == "__main__":
+    main()
